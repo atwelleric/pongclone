@@ -5,9 +5,17 @@
 const cvs = document.getElementById('pong');
 const ctx = cvs.getContext('2d');
 
-// ctx.fillStyle = 'black';
+//loda sounds
 
-// ctx.fillRect(100, 200, 50, 75);
+let hit = new Audio();
+let wall = new Audio();
+let userScore = new Audio();
+let comScore = new Audio();
+
+hit.src = 'sounds/hit.mp3';
+wall.src = 'sounds/wall.mp3';
+comScore = 'sounds/comScore.mp3';
+userScore = 'sounds/userScore.mp3';
 
 // User paddle
 
@@ -58,8 +66,8 @@ function movePaddle(evt) {
 function resetBall() {
 	ball.x = cvs.width / 2;
 	ball.y = cvs.height / 2;
-	ball.speed = 7;
 	ball.velocityX = -ball.velocityX;
+	ball.speed = 7;
 }
 
 function collision(b, p) {
@@ -88,12 +96,14 @@ function update() {
 	com.y += (ball.y - (com.y + com.height / 2)) * compDifficulty;
 
 	if (ball.y + ball.radius > cvs.height || ball.y - ball.radius < 0) {
-		ball.velocityY = -ball.velocityY;
+        ball.velocityY = -ball.velocityY;
+        wall.play();
 	}
 
 	let player = ball.x + ball.radius < cvs.width / 2 ? user : com;
 
 	if (collision(ball, player)) {
+        hit.play();
 		// where the ball hit paddle
 		let collidePoint = ball.y - (player.y + player.height / 2);
 		// normalize
@@ -110,11 +120,13 @@ function update() {
 		ball.speed += 0.2;
 	}
 	if (ball.x - ball.radius < 0) {
-		com.score++;
-		resetBall();
+        resetBall();
+        com.score++;
+        comScore.play();
 	} else if (ball.x + ball.radius > cvs.width) {
-		user.score++;
 		resetBall();
+        user.score++;
+        userScore.play();
 	}
 }
 
